@@ -44,7 +44,8 @@ pkgs="asusctl ydotool python3 libkscreen plasma-keyboard libksysguard kf6-kquick
 # and power-profiles-daemon both provide. Only add one if neither is there.
 rpm -q tuned-ppd >/dev/null || rpm -q power-profiles-daemon >/dev/null || pkgs="$pkgs tuned-ppd"
 sudo dnf install -y $pkgs
-sudo systemctl enable --now asusd
+# asusd is a static unit (udev/D-Bus start it at boot); just make sure it runs now.
+sudo systemctl start asusd
 
 echo "== Device access"
 # Rear light bar (hidraw) and /dev/uinput (arrow pad) for the logged-in user.
