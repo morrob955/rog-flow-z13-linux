@@ -1,0 +1,13 @@
+# Z13 Control: put the rear light bar back to the saved setting. Pulled in by udev
+# whenever the bar's device appears (boot, resume, replug) and at login. The delay
+# lets asusd finish re-sending its own colour first.
+[Unit]
+Description=Restore Z13 rear light bar
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/sleep 3
+ExecStart=%h/.local/share/plasma/plasmoids/org.slug.z13control/contents/code/rear.py restore
+
+[Install]
+WantedBy=default.target

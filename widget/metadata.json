@@ -1,0 +1,19 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "slug"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Armoury Crate-style controls for the ROG Flow Z13 (2025, GZ302)",
+        "Icon": "speedometer",
+        "Id": "org.slug.z13control",
+        "License": "MIT",
+        "Name": "Z13 Control",
+        "Version": "1.1",
+        "Website": "https://github.com/morrob955/rog-flow-z13-linux"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

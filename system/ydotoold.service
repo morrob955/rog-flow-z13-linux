@@ -1,0 +1,11 @@
+[Unit]
+Description=ydotool daemon for the Z13 Control arrow pad
+# Needs /dev/uinput access, granted to the logged-in user by 90-z13-uinput.rules.
+
+[Service]
+ExecStart=/usr/bin/ydotoold --socket-path=%t/.ydotool_socket
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
