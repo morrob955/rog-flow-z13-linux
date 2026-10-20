@@ -2,7 +2,11 @@
 
 An Armoury Crate-style control panel for the **ASUS ROG Flow Z13 (2025, GZ302)** on **Fedora KDE Plasma**. It's a Plasma widget with power modes that actually change the power settings, fan presets, the keyboard and rear light bar, live system monitoring, and tablet-mode helpers (an on-screen keyboard button and a floating arrow pad).
 
-<p align="center"><img src="docs/widget.png" width="318" alt="Z13 Control widget: brightness, tablet input, Eco/Balanced/Turbo, sustained power, fans, keyboard and rear light bar"></p>
+<p align="center">
+  <img src="docs/widget.png" width="318" alt="Controls tab: brightness, tablet input, Eco/Balanced/Turbo, sustained power, fans, keyboard and rear light bar">
+  &nbsp;&nbsp;
+  <img src="docs/monitor.png" width="318" alt="Monitor tab: CPU, memory, GPU and power graphs, per-thread CPU load ring, memory breakdown, temperatures and fan speeds">
+</p>
 
 ## Features
 
@@ -23,7 +27,7 @@ An Armoury Crate-style control panel for the **ASUS ROG Flow Z13 (2025, GZ302)**
 - **Tablet input:**
   - **Keyboard** opens the on-screen keyboard for the app you're in.
   - **Arrow pad** opens a small floating ↑ ← ↓ → pad. It's handy in terminals, where the on-screen keyboard has no arrow keys. It doesn't take focus from your app, it repeats when held, and it stays where you drag it.
-- **Monitor tab:** CPU, GPU, memory and package power graphs, temperatures, fan speeds, and an estimate of battery time left or time to full.
+- **Monitor tab:** live CPU, memory, GPU and package power graphs; a per-thread CPU load ring with the busiest thread, clock and temperature; a memory breakdown (apps, cache, free); CPU, GPU, SSD and Wi-Fi temperature gauges; both fan speeds; and battery time left or time to full.
 - **Charge limit 80%** and **panel overdrive** toggles, plus screen brightness.
 - Controls respond the moment you tap them, while the hardware catches up in the background.
 
