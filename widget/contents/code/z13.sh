@@ -8,7 +8,14 @@ P="$D /xyz/ljones xyz.ljones.Platform"
 ARM=/sys/class/firmware-attributes/asus-armoury/attributes
 REAR="$(dirname "$0")/rear.py"
 PPD="org.freedesktop.UPower.PowerProfiles /org/freedesktop/UPower/PowerProfiles org.freedesktop.UPower.PowerProfiles"
-SB="org.kde.ScreenBrightness /org/kde/ScreenBrightness/display0 org.kde.ScreenBrightness.Display"
+# KDE numbers its displays per session (display0, display1, ...); use the built-in one.
+display() {
+    for d in $(busctl --user get-property org.kde.ScreenBrightness /org/kde/ScreenBrightness org.kde.ScreenBrightness DisplaysDBusNames | cut -d' ' -f3- | tr -d '"'); do
+        [ "$(busctl --user get-property org.kde.ScreenBrightness /org/kde/ScreenBrightness/$d org.kde.ScreenBrightness.Display IsInternal)" = "b true" ] && { echo "/org/kde/ScreenBrightness/$d"; return; }
+    done
+}
+BD=$(display)
+SB="org.kde.ScreenBrightness $BD org.kde.ScreenBrightness.Display"
 
 hwmon() { # name file
     for h in /sys/class/hwmon/hwmon*; do
@@ -70,6 +77,7 @@ status)
     set -- $(busctl --user get-property $SB Brightness MaxBrightness)
     echo "bright=$(($2 * 100 / $4))"
     echo "brightmax=$4"
+    echo "brightpath=$BD"
     # Which fan preset is active, recognised by the first point of the CPU curve.
     if [ "$(hwmon asus_custom_fan_curve pwm1_enable)" != 1 ]; then
         echo "fans=auto"

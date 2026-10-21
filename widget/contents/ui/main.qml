@@ -101,8 +101,8 @@ PlasmoidItem {
     // Flag 1 hides the on-screen indicator since the slider already shows the level.
     function setBrightness(pct) {
         const raw = Math.round(pct * (s.brightmax || 10000) / 100)
-        exec.connectSource("busctl --user call org.kde.ScreenBrightness /org/kde/ScreenBrightness/display0 "
-                           + "org.kde.ScreenBrightness.Display SetBrightness iu " + raw + " 1")
+        exec.connectSource("busctl --user call org.kde.ScreenBrightness " + s.brightpath
+                           + " org.kde.ScreenBrightness.Display SetBrightness iu " + raw + " 1")
     }
 
     function place() {
