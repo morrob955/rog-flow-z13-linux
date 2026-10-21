@@ -9,7 +9,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 ID=org.slug.z13control
 RULES="70-z13-rear.rules 90-z13-uinput.rules"
-UNITS="z13-rear.service ydotoold.service"
+UNITS="z13-rear.service ydotoold.service z13-undervolt.service"
 UNITDIR=~/.config/systemd/user
 
 [[ $EUID -ne 0 ]] || { echo "Run as your normal user, not with sudo."; exit 1; }

@@ -49,6 +49,12 @@ refresh() { # Hz on the built-in panel, keeping its current resolution
     [ -n "$res" ] && kscreen-doctor output.eDP-1.mode.$res@$1 >/dev/null 2>&1
 }
 
+undervolt() { # platform profile: apply its saved Curve Optimizer offset, if undervolting is set up
+    v=$(sed -n "s/^$1=//p" ~/.config/z13control-undervolt 2>/dev/null)
+    [ -n "$v" ] && [ -x /usr/local/sbin/z13-undervolt ] && sudo -n /usr/local/sbin/z13-undervolt auto "$v" >/dev/null 2>&1
+    return 0
+}
+
 case "$1" in
 status)
     echo "mode=$(cat /sys/firmware/acpi/platform_profile)"
@@ -104,6 +110,7 @@ mode) # quiet|balanced|performance; also becomes the default for the current pow
     profile $n
     ppt "$@"
     refresh $hz
+    undervolt "$(cat /sys/firmware/acpi/platform_profile)"
     # tuned-ppd sometimes loses a race with asusd's write and lands on the wrong profile.
     # Re-asserting is safe: an unchanged platform profile keeps the PPTs just set.
     [ "$($B get-property $PPD ActiveProfile)" = "s \"$p\"" ] || $B set-property $PPD ActiveProfile s $p
@@ -157,5 +164,6 @@ brightness) # percent; flag 1 hides the on-screen indicator since the slider sho
     set -- "$2" $(busctl --user get-property $SB MaxBrightness)
     busctl --user call $SB SetBrightness iu $(($1 * $3 / 100)) 1
     ;;
+undervolt) undervolt "$(cat /sys/firmware/acpi/platform_profile)" ;; # re-apply for the current mode (login)
 *) exit 1 ;;
 esac

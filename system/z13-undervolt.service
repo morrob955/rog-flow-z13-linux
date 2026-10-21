@@ -1,0 +1,12 @@
+# Z13 Control: apply the current mode's CPU undervolt after login. The delay keeps a bad value
+# from getting in the way of startup; the root helper skips it if the last boot crashed.
+[Unit]
+Description=Apply Z13 CPU undervolt
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/sleep 30
+ExecStart=/bin/sh %h/.local/share/plasma/plasmoids/org.slug.z13control/contents/code/z13.sh undervolt
+
+[Install]
+WantedBy=default.target

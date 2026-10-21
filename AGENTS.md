@@ -34,6 +34,7 @@ cd rog-flow-z13-linux
 ```bash
 systemctl is-active asusd                       # active
 systemctl --user is-active ydotoold z13-rear    # active / active or inactive (z13-rear is a oneshot: inactive after a successful run is fine)
+systemctl --user is-enabled z13-undervolt       # enabled (it does nothing until undervolt.sh is set up)
 getfacl /dev/uinput | grep "user:$USER"         # user:<name>:rw-
 kpackagetool6 -t Plasma/Applet -s org.slug.z13control   # prints the widget's details
 sh ~/.local/share/plasma/plasmoids/org.slug.z13control/contents/code/z13.sh status   # key=value lines, e.g. mode=balanced spl=60
@@ -46,6 +47,25 @@ Then tell the user to add the widget: right-click the panel → **Add or Manage 
 ## 4. Optional fixes (ask first)
 
 `fixes.sh` changes kernel arguments, firmware lookup and a udev rule (quiet speakers, screen flicker, keyboard waking from suspend). **Don't run it without the user's explicit OK.** Explain the three fixes from the README, then have them run `sudo bash fixes.sh` and reboot. Revert with `sudo bash fixes.sh --undo`.
+
+## 5. Optional undervolt (ask first)
+
+`undervolt.sh` builds and signs a kernel driver (ryzen_smu through dkms), builds RyzenAdj, installs a root helper with a passwordless sudoers rule limited to that helper, and queues a Secure Boot MOK enrollment. **Don't run it without the user's explicit OK**, and explain that a too-large undervolt can crash the machine (the crash guard turns it off on the next boot).
+
+1. The user runs `sudo bash undervolt.sh` in a terminal. `mokutil --import` asks them to pick a one-time password (8–16 characters).
+2. They restart. On the blue MOK management screen: Enroll MOK → Continue → Yes → password → Reboot.
+3. Verify after login:
+
+   ```bash
+   modinfo -F signer ryzen_smu                    # the dkms signing key
+   cat /sys/kernel/ryzen_smu_drv/drv_version      # driver loaded
+   sudo z13-undervolt status                      # available=1, undervolt=<n>, crashed=0, mp1=0x1, rsmu=0x1
+   ```
+
+   `mp1=0x1 rsmu=0x1` means the CPU accepted the value. `0xfe` means the command is unknown and `0xfd` means it was rejected.
+4. Values live in `~/.config/z13control-undervolt` (`quiet=`, `balanced=`, `performance=`, each 0–50, default 10). After editing, re-select the mode in the widget, or run `sh ~/.local/share/plasma/plasmoids/org.slug.z13control/contents/code/z13.sh undervolt`. Raise values in steps of 5 and only with the user's agreement. If the machine crashes, lower them.
+
+Undo with `sudo bash undervolt.sh --undo`.
 
 ## Troubleshooting
 
@@ -64,6 +84,7 @@ Then tell the user to add the widget: right-click the panel → **Add or Manage 
 - `system/`: udev rules and user systemd units installed by `install.sh`
 - `install.sh`: install, update (`./install.sh`) and `--uninstall`
 - `fixes.sh`: optional system fixes, independent of the widget
+- `undervolt.sh`: optional CPU undervolt setup (driver, helper, crash guard, resume hook)
 
 ## Uninstall
 

@@ -52,7 +52,7 @@ Run it as your normal user; it asks for `sudo` when it needs it. It:
 1. installs `asusctl` (enabling the asus-linux COPR), `ydotool` and the KDE pieces the widget uses, then enables `asusd`
 2. adds two udev rules that give the logged-in user access to the rear light bar and `/dev/uinput` (for the arrow pad)
 3. installs the widget with `kpackagetool6`
-4. enables two user services: `ydotoold` (arrow pad) and `z13-rear` (restores the light bar)
+4. enables three user services: `ydotoold` (arrow pad), `z13-rear` (restores the light bar) and `z13-undervolt` (applies the optional undervolt at login; does nothing unless you set it up)
 
 Then right-click the panel → **Add or Manage Widgets** → **Z13 Control**. It opens as a floating panel; you can also bind it to a key in System Settings → Keyboard → Shortcuts (search "Z13").
 
@@ -72,6 +72,29 @@ sudo bash fixes.sh --undo   # revert, then reboot
 - **Screen flicker:** disables eDP Panel Self Refresh and Panel Replay (`amdgpu.dcdebugmask=0x410`). This costs a little idle battery.
 - **Waking in your bag:** stops the folded keyboard from waking the machine over USB. The lid and the power button still wake it.
 
+## Optional CPU undervolt
+
+`undervolt.sh` sets up a Curve Optimizer undervolt (an all-core negative offset). The CPU then runs the same clocks at lower voltage, so it boosts higher within the same power limit and runs a little cooler. On the author's Z13, -20 gave about 4% higher sustained all-core clocks in Balanced and has been stable.
+
+```bash
+sudo bash undervolt.sh          # set up, then restart and enroll the key (below)
+sudo bash undervolt.sh --undo   # remove it
+```
+
+- **Secure Boot stays on.** The script builds the [ryzen_smu](https://github.com/amkillam/ryzen_smu) driver through dkms, which signs it with a machine owner key (MOK). On the next restart a blue **MOK management** screen appears: **Enroll MOK → Continue → Yes →** type the password you set → **Reboot**. Use the physical keyboard. This only happens once; dkms re-signs the driver on kernel updates.
+- **Per-mode values** live in `~/.config/z13control-undervolt`. The script starts every mode at a conservative -10:
+
+  ```
+  quiet=10
+  balanced=10
+  performance=10
+  ```
+
+  Each value is the size of the negative offset (0–50). The widget applies the active mode's value whenever you switch modes, at login, and after resume (the CPU forgets it on every boot and sleep). To change a value, edit the file and re-select the mode. Raise it in steps of 5 and run a heavy all-core load for a while after each step. Every chip is different, so a value that's stable on one Z13 can crash another.
+- **Crash guard:** if the machine crashes or hard-resets while undervolted, the next boot skips the undervolt automatically. `sudo z13-undervolt status` shows the current value and `crashed=1`. Lower the values, then clear the flag with `sudo z13-undervolt set <n>`.
+- It installs a small root helper (`/usr/local/sbin/z13-undervolt`) that the widget may run without a password. The helper accepts only offsets from 0 to 50.
+- In Eco the CPU doesn't boost, so the undervolt mostly lowers temperature and power there rather than raising speed.
+
 ## Troubleshooting
 
 | Symptom | Check |
@@ -80,6 +103,7 @@ sudo bash fixes.sh --undo   # revert, then reboot
 | Mode changes but boost/EPP don't follow | `busctl --system get-property org.freedesktop.UPower.PowerProfiles /org/freedesktop/UPower/PowerProfiles org.freedesktop.UPower.PowerProfiles ActiveProfile` |
 | Arrow pad keys do nothing | `systemctl --user status ydotoold` and `getfacl /dev/uinput` (your user needs `rw`; log out and back in after installing) |
 | Keyboard button does nothing | KWin only shows the on-screen keyboard after touch or pen input. Tap the button with your finger. |
+| Undervolt not applied | `sudo z13-undervolt status`: `available=0` means the driver isn't loaded (check `mokutil --sb-state` and that the key was enrolled); `crashed=1` means the crash guard switched it off |
 | Rear light bar doesn't respond | `ls -l /etc/udev/rules.d/70-z13-rear.rules`, then replug or reboot |
 
 ## For AI assistants
