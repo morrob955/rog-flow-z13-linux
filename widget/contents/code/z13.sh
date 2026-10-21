@@ -118,11 +118,15 @@ mode) # quiet|balanced|performance; also becomes the default for the current pow
 power) # sustained watts; boost limits keep the factory 60/75/86 spacing.
     # The profile follows the watts, split halfway between the mode presets (40/60/80).
     s=$2
-    if [ $s -lt 50 ]; then profile 2; elif [ $s -lt 70 ]; then profile 0; else profile 1; fi
+    if [ $s -lt 50 ]; then n=2; p=power-saver; elif [ $s -lt 70 ]; then n=0; p=balanced; else n=1; p=performance; fi
+    # Keep tuned-ppd's profile in step, as `mode` does; only wait for it when it changes.
+    [ "$($B get-property $PPD ActiveProfile)" = "s \"$p\"" ] || { $B set-property $PPD ActiveProfile s $p; sleep 1; }
+    profile $n
     t=$((s + 15)); f=$((s + 26))
     [ $t -gt 92 ] && t=92
     [ $f -gt 93 ] && f=93
     ppt $s $t $f
+    [ "$($B get-property $PPD ActiveProfile)" = "s \"$p\"" ] || $B set-property $PPD ActiveProfile s $p
     ;;
 fans) # auto|quiet|cool|max; a preset applies to every power mode
     case "$2" in
