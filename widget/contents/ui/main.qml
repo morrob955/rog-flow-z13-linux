@@ -950,13 +950,13 @@ PlasmoidItem {
                         onPicked: v => run("rear " + v + " " + root.s.rearmode + " " + root.s.rearcolour)
                     }
                     Segmented {
-                        options: [[0, "Static"], [1, "Breathe"], [10, "Pulse"]]
+                        options: [[0, "Static"], [1, "Breathe"], [10, "Pulse"], [3, "Rainbow"]]
                         current: root.s.rearmode
                         onPicked: v => run("rear " + Math.max(1, root.s.rearbright) + " " + v + " " + root.s.rearcolour)
                     }
-                    Swatches {
-                        current: root.s.rearcolour
-                        onPicked: v => run("rear " + Math.max(1, root.s.rearbright) + " " + root.s.rearmode + " " + v)
+                    Swatches { // rainbow ignores the colour, so picking one switches back to static
+                        current: root.s.rearmode === 3 ? "" : root.s.rearcolour
+                        onPicked: v => run("rear " + Math.max(1, root.s.rearbright) + " " + (root.s.rearmode === 3 ? 0 : root.s.rearmode) + " " + v)
                     }
 
                     Card {

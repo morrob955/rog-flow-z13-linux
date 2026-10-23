@@ -7,7 +7,7 @@ PR #390; the effect needs a SetMode for zone 0 (which carries the colour) and zo
 asusd re-sends its own stored colour for this device, so restore runs after every
 asusd lighting write and whenever the device appears (udev -> z13-rear.service).
 
-  rear.py <brightness 0-3> <mode 0|1|10> <r> <g> <b>   apply and remember
+  rear.py <brightness 0-3> <mode 0|1|3|10> <r> <g> <b>   apply and remember
   rear.py restore                                      re-apply the remembered setting
   rear.py status                                       print rearbright=, rearmode=, rearcolour=
 """
@@ -37,7 +37,7 @@ def load():
 
 
 def apply(level, mode, rgb):
-    # SetMode: zone, mode, colour, speed (med), direction, flag, second colour (black, for breathe)
+    # SetMode: zone, mode, colour, speed (med), direction, flag, second colour (black, for breathe); 3 is rainbow wave
     flag = 0xFF if not any(rgb) else 1 if mode == 1 else 0
     packets = [b"\x5d\xb9", b"]ASUS Tech.Inc.", b"\x5d\x05\x20\x31\x00\x1a", b"\x5d\xc0\x03\x01",
                b"\x5d\xbd\x01\xff\x1f\xff\xff\xff" if level else b"\x5d\xbd\x01\x00\x00\x00\x00\xff",

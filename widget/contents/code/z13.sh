@@ -158,7 +158,7 @@ kbd) # asusd also writes the rear bar's device, so put the rear back afterwards
     done
     $REAR restore
     ;;
-rear) $REAR "$2" $3 $4 $5 $6 ;; # brightness 0-3, mode 0|1|10, r g b
+rear) $REAR "$2" $3 $4 $5 $6 ;; # brightness 0-3, mode 0|1|3|10, r g b
 overdrive) armoury panel_overdrive "$2" ;;
 osk) # show the on-screen keyboard once the widget has closed and focus is back on the app
     sleep 0.4

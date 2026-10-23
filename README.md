@@ -23,7 +23,7 @@ An Armoury Crate-style control panel for the **ASUS ROG Flow Z13 (2025, GZ302)**
 - **Sustained power slider** (28–80 W) for anything in between.
 - **Fan presets:** Auto, Quiet, Cool, Max.
 - **Keyboard backlight:** brightness, effect (static, breathe, pulse) and colour.
-- **Rear light bar:** brightness, effect and colour. asusd doesn't support the bar on this model, so the widget drives it directly and restores it after boot and resume.
+- **Rear light bar:** brightness, effect (static, breathe, pulse, rainbow) and colour. asusd doesn't support the bar on this model, so the widget drives it directly and restores it after boot and resume.
 - **Tablet input:**
   - **Keyboard** opens the on-screen keyboard for the app you're in.
   - **Arrow pad** opens a small floating ↑ ← ↓ → pad. It's handy in terminals, where the on-screen keyboard has no arrow keys. It doesn't take focus from your app, it repeats when held, and it stays where you drag it.
